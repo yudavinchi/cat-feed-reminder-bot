@@ -1,0 +1,29 @@
+name: Daily Cat Feed Reminder
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # every day at 06:00 UTC (~9:00 local Israel time)
+  workflow_dispatch:       # manual run option
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run bot
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          PHONE_NUMBER_ID: ${{ secrets.PHONE_NUMBER_ID }}
+          RECIPIENT_NUMBER: ${{ secrets.RECIPIENT_NUMBER }}
+        run: node bot.js
